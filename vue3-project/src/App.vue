@@ -1,36 +1,24 @@
 <template>
-  <div class="name">{{name.id}}</div>
+  <div class="name">{{name}}</div>
 
-  <button class="btn btn-primary" v-on:click="clickedEvent">Click</button>
+  <input type="text" v-model="name">
+  <button class="btn btn-primary" @click="clickedEvent">Click</button>
 </template>
 
 <script>
-import {reactive} from 'vue';
+import {ref} from 'vue';
 
 export default {
   setup() {
-    // const name = ref('Taehyung Kim Code!');
-    const name = reactive({
-       id: 1
-      });
-
-    const fn = () => {
-      return 'HelloWorld';
-    };
-
-    const fn2 = (n) => {
-      return 'HelloWorld2 ' + n;
-    };
+    const name = ref('Taehyung Kim Code!');
 
     const clickedEvent = () => {
-      name.id = 2;
+      // name.value = 'Clicked';
     };
 
     return {
       name,
-      fn,
-      fn2,
-      clickedEvent
+      clickedEvent,
     };
   },
 }
