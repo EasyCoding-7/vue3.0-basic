@@ -24,19 +24,23 @@
         This field cannot be empty
       </div>
     </form>
+    <div v-if="!todos.length">
+      추가된 Todo가 없습니다
+    </div>
+
+    <!-- todos 출력시에 index값도 넘긴다 -->
     <div 
-      v-for="todo in todos"
+      v-for="(todo, index) in todos"
       :key="todo.id"
       class="card mt-2"
     >
-      <div class="card-body p-2">
-        <div class="form-check">
+      <div class="card-body p-2 d-flex align-items-center">
+        <div class="form-check flex-grow-1">
           <input 
             class="form-check-input" 
             type="checkbox"
             v-model="todo.completed"
           >
-          <!-- complete의 상태에 따라 label을 다르게두려 한다. -->
           <label 
             class="form-check-label"
             :class="{ todo: todo.completed }"
@@ -44,24 +48,28 @@
             {{ todo.subject }}
           </label>
         </div>
+        <div>
+          <!-- 넘긴 index는 삭제에 사용되다. -->
+          <button 
+            class="btn btn-danger btn-sm"
+            @click="deleteTodo(index)"
+          >
+            Delete
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import {ref} from 'vue';
+import { ref } from 'vue';
 
 export default {
   setup() {
     const todo = ref('');
     const todos = ref([]);
     const hasError = ref(false);
-    // 스타일을 미리지정
-    const todoStyle = {
-      textDecoration: 'line-through',
-      color: 'gray'
-    };
 
     const onSubmit = () => {
       if (todo.value === '') {
@@ -77,23 +85,25 @@ export default {
       }
     };
 
+  // 삭제
+    const deleteTodo = (index) => {
+      todos.value.splice(index, 1);
+    };
+
     return {
       todo,
       todos,
       onSubmit,
       hasError,
-      todoStyle,
+      deleteTodo,
     };
-  },
+  }
 }
 </script>
 
 <style>
-.name{
-  color:#ff0000;
-}
-.todo {
-  color: gray;
-  text-decoration: line-through;
-}
+  .todo {
+    color: gray;
+    text-decoration: line-through;
+  }
 </style>
