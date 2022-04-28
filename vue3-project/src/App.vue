@@ -1,55 +1,28 @@
 <template>
   <div class="container">
     <h2>To-Do List</h2>
-
-    <!-- TodoSimpleForm에서 add-todo 호출시 App.vue에서 addTodo 호출 -->
     <TodoSimpleForm @add-todo="addTodo" />
     <div v-if="!todos.length">
       추가된 Todo가 없습니다
     </div>
-    <div 
-      v-for="(todo, index) in todos"
-      :key="todo.id"
-      class="card mt-2"
-    >
-      <div class="card-body p-2 d-flex align-items-center">
-        <div class="form-check flex-grow-1">
-          <input 
-            class="form-check-input" 
-            type="checkbox"
-            v-model="todo.completed"
-          >
-          <label 
-            class="form-check-label"
-            :class="{ todo: todo.completed }"
-          >
-            {{ todo.subject }}
-          </label>
-        </div>
-        <div>
-          <button 
-            class="btn btn-danger btn-sm"
-            @click="deleteTodo(index)"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
+    <!-- todo list를 보낸다 -->
+    <TodoList :todos="todos" />
   </div>
 </template>
 
 <script>
 import { ref } from 'vue';
 import TodoSimpleForm from './components/TodoSimpleForm.vue';
+import TodoList from './components/TodoList.vue';
 
 export default {
   components: {
-    TodoSimpleForm
+    TodoSimpleForm,
+    TodoList
   },
   setup() {
     const todos = ref([]);
-    const addTodo = (todo) => { // eslint-disable-line no-unused-vars
+    const addTodo = (todo) => {
       todos.value.push(todo);
     };
 
@@ -60,6 +33,8 @@ export default {
     return {
       todos,
       deleteTodo,
+      TodoList,
+      addTodo
     };
   }
 }
