@@ -4,7 +4,6 @@
     <form @submit.prevent="onSubmit">
       <div class="d-flex">
         <div class="flex-grow-1 mr-2">
-          <!-- v-model을 통해 양방향 바인딩 -->
           <input
             class="form-control"
             type="text" 
@@ -21,7 +20,6 @@
           </button>
         </div>
       </div>
-      <!-- 에러처리 -->
       <div v-show="hasError" style="color: red">
         This field cannot be empty
       </div>
@@ -32,7 +30,17 @@
       class="card mt-2"
     >
       <div class="card-body p-2">
-        {{ todo.subject }}
+        <!-- 체크박스 삽입 -->
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox"
+            v-model="todo.completed"
+          >
+          <label class="form-check-label">
+            {{ todo.subject }}
+          </label>
+        </div>
       </div>
     </div>
   </div>
@@ -44,10 +52,7 @@ import {ref} from 'vue';
 export default {
   setup() {
     const todo = ref('');
-    const todos = ref([
-      {id: 1, subject: '휴대폰 사기'},
-      {id: 2, subject: '장보기'},
-    ]);
+    const todos = ref([]);
     const hasError = ref(false);
 
     const onSubmit = () => {
@@ -56,9 +61,11 @@ export default {
       } else {
         todos.value.push({
           id: Date.now(),
-          subject: todo.value
+          subject: todo.value,
+          completed: true,
         });
         hasError.value = false;
+        todo.value = '';
       }
     };
 
