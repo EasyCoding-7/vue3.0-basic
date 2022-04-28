@@ -1,12 +1,11 @@
 <template>
-<!-- class="container" - 좌/우 여백을 둔다 -->
     <div class="container">
     <h2>To-Do List</h2>
     <form  
       @submit.prevent="onSubmit"
       class="d-flex"
-    ><!-- .prevent - submit 후 화면의 갱신을 막는다 -->
-      <div class="flex-grow-1 mr-2"> <!-- mr-2 - margin right -->
+    >
+      <div class="flex-grow-1 mr-2">
         <input
           class="form-control"
           type="text" 
@@ -23,7 +22,16 @@
         </button>
       </div>
     </form>
-    {{ todos }}
+    <!-- 단순 todos 내의 내용을 출력 -->
+    <div 
+      v-for="todo in todos"
+      :key="todo.id"
+      class="card mt-2"
+    >
+      <div class="card-body p-2">
+        {{ todo.subject }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,7 +41,10 @@ import {ref} from 'vue';
 export default {
   setup() {
     const todo = ref('');
-    const todos = ref([]);
+    const todos = ref([
+      {id: 1, subject: '휴대폰 사기'},
+      {id: 2, subject: '장보기'},
+    ]);
 
     const onSubmit = () => {
       todos.value.push({
