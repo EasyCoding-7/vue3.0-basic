@@ -1,34 +1,12 @@
 <template>
   <div class="container">
     <h2>To-Do List</h2>
-    <form @submit.prevent="onSubmit">
-      <div class="d-flex">
-        <div class="flex-grow-1 mr-2">
-          <input
-            class="form-control"
-            type="text" 
-            v-model="todo"
-            placeholder="Type new to-do"
-          >
-        </div>
-        <div>
-          <button 
-            class="btn btn-primary"
-            type="submit"
-          >
-            Add
-          </button>
-        </div>
-      </div>
-      <div v-show="hasError" style="color: red">
-        This field cannot be empty
-      </div>
-    </form>
+
+    <!-- TodoSimpleForm에서 add-todo 호출시 App.vue에서 addTodo 호출 -->
+    <TodoSimpleForm @add-todo="addTodo" />
     <div v-if="!todos.length">
       추가된 Todo가 없습니다
     </div>
-
-    <!-- todos 출력시에 index값도 넘긴다 -->
     <div 
       v-for="(todo, index) in todos"
       :key="todo.id"
@@ -49,7 +27,6 @@
           </label>
         </div>
         <div>
-          <!-- 넘긴 index는 삭제에 사용되다. -->
           <button 
             class="btn btn-danger btn-sm"
             @click="deleteTodo(index)"
@@ -64,37 +41,24 @@
 
 <script>
 import { ref } from 'vue';
+import TodoSimpleForm from './components/TodoSimpleForm.vue';
 
 export default {
+  components: {
+    TodoSimpleForm
+  },
   setup() {
-    const todo = ref('');
     const todos = ref([]);
-    const hasError = ref(false);
-
-    const onSubmit = () => {
-      if (todo.value === '') {
-        hasError.value = true;
-      } else {
-        todos.value.push({
-          id: Date.now(),
-          subject: todo.value,
-          completed: false,
-        });
-        hasError.value = false;
-        todo.value = '';
-      }
+    const addTodo = (todo) => { // eslint-disable-line no-unused-vars
+      todos.value.push(todo);
     };
 
-  // 삭제
     const deleteTodo = (index) => {
       todos.value.splice(index, 1);
     };
 
     return {
-      todo,
       todos,
-      onSubmit,
-      hasError,
       deleteTodo,
     };
   }
