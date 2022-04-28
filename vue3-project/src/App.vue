@@ -35,6 +35,20 @@ export default {
   setup() {
     const todos = ref([]);
     const error = ref('');
+
+    // db를 한 번 읽는다
+    const getTodos = async () => {
+      try {
+        const res = await axios.get('http://localhost:3000/todos');
+        todos.value = res.data;
+      } catch (err) {
+        console.log(err);
+        error.value = 'Something went wrong.';
+      }    
+    };
+
+    getTodos();
+
     const addTodo = async (todo) => {
       error.value = '';
       try {
@@ -49,13 +63,35 @@ export default {
       }
     };
 
-    const deleteTodo = (index) => {
-      todos.value.splice(index, 1);
+    // 삭제 db반영
+    const deleteTodo = async (index) => {
+      error.value = '';
+      const id = todos.value[index].id;
+      try {
+        await axios.delete('http://localhost:3000/todos/' + id);
+        
+        todos.value.splice(index, 1);
+      } catch (err) {
+        console.log(err);
+        error.value = 'Something went wrong.';
+      }
     };
 
-    const toggleTodo = (index) => {
-      console.log(index)
-      todos.value[index].completed = !todos.value[index].completed
+    // toggle db 반영
+    const toggleTodo = async (index) => {
+      error.value = '';
+      const id = todos.value[index].id;
+      try {
+        await axios.patch('http://localhost:3000/todos/' + id, {
+          completed: !todos.value[index].completed
+        });
+
+        todos.value[index].completed = !todos.value[index].completed
+      } catch (err) {
+        console.log(err);
+        error.value = 'Something went wrong.';
+      }
+      
     };
 
     const searchText = ref('');
