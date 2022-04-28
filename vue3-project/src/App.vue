@@ -10,6 +10,7 @@
     <hr />
     <TodoSimpleForm @add-todo="addTodo" />
     <div style="color: red">{{ error }}</div>
+    
     <div v-if="!filteredTodos.length">
       There is nothing to display
     </div>
@@ -17,7 +18,29 @@
       :todos="filteredTodos" 
       @toggle-todo="toggleTodo"
       @delete-todo="deleteTodo"
-      />
+    />
+    <hr />
+    <nav aria-label="Page navigation example">
+      <ul class="pagination">
+        <li v-if="currentPage !== 1" class="page-item">
+          <a class="page-link" href="#">
+            Previous
+          </a>
+        </li>
+        <li
+          v-for="page in numberOfPages"
+          :key="page" 
+          class="page-item"
+          :class="currentPage === page ? 'active' : ''"
+        >
+          <a class="page-link" href="#">{{page}}</a>
+        </li>
+        <li v-if="numberOfPages !== currentPage" class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+    </nav>
+    {{numberOfPages}}
   </div>
 </template>
 
@@ -30,16 +53,25 @@ import axios from 'axios';
 export default {
   components: {
     TodoSimpleForm,
-    TodoList
+    TodoList,
   },
   setup() {
     const todos = ref([]);
     const error = ref('');
+    const numberOfTodos = ref(0);
+    const limit = 5;
+    const currentPage = ref(3);
 
-    // db를 한 번 읽는다
+    const numberOfPages = computed(() => {
+      return Math.ceil(numberOfTodos.value/limit);
+    });
+
     const getTodos = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/todos');
+        const res = await axios.get(
+          `http://localhost:3000/todos?_page=${currentPage.value}&_limit=${limit}`
+        );
+        numberOfTodos.value = res.headers['x-total-count'];
         todos.value = res.data;
       } catch (err) {
         console.log(err);
@@ -50,6 +82,7 @@ export default {
     getTodos();
 
     const addTodo = async (todo) => {
+      // 데이터베이스 투두를 저장
       error.value = '';
       try {
         const res = await axios.post('http://localhost:3000/todos', {
@@ -63,7 +96,6 @@ export default {
       }
     };
 
-    // 삭제 db반영
     const deleteTodo = async (index) => {
       error.value = '';
       const id = todos.value[index].id;
@@ -77,7 +109,6 @@ export default {
       }
     };
 
-    // toggle db 반영
     const toggleTodo = async (index) => {
       error.value = '';
       const id = todos.value[index].id;
@@ -104,16 +135,16 @@ export default {
 
       return todos.value;
     });
-
     return {
       todos,
-      deleteTodo,
-      TodoList,
       addTodo,
+      deleteTodo,
       toggleTodo,
       searchText,
       filteredTodos,
       error,
+      numberOfPages,
+      currentPage,
     };
   }
 }
