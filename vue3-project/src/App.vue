@@ -35,19 +35,18 @@ export default {
   setup() {
     const todos = ref([]);
     const error = ref('');
-    const addTodo = (todo) => {
-      // todo를 저장
+    const addTodo = async (todo) => {
       error.value = '';
-      axios.post('http://localhost:3000/todos', {
-        subject: todo.subject,
-        completed: todo.completed,
-      }).then(res => {
-        console.log(res);
+      try {
+        const res = await axios.post('http://localhost:3000/todos', {
+          subject: todo.subject,
+          completed: todo.completed,
+        });
         todos.value.push(res.data);
-      }).catch(err => {
+      } catch (err) {
         console.log(err);
         error.value = 'Something went wrong.';
-      });  
+      }
     };
 
     const deleteTodo = (index) => {
