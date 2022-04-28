@@ -30,14 +30,17 @@
       class="card mt-2"
     >
       <div class="card-body p-2">
-        <!-- 체크박스 삽입 -->
         <div class="form-check">
           <input 
             class="form-check-input" 
             type="checkbox"
             v-model="todo.completed"
           >
-          <label class="form-check-label">
+          <!-- complete의 상태에 따라 label을 다르게두려 한다. -->
+          <label 
+            class="form-check-label"
+            :class="{ todo: todo.completed }"
+          >
             {{ todo.subject }}
           </label>
         </div>
@@ -54,6 +57,11 @@ export default {
     const todo = ref('');
     const todos = ref([]);
     const hasError = ref(false);
+    // 스타일을 미리지정
+    const todoStyle = {
+      textDecoration: 'line-through',
+      color: 'gray'
+    };
 
     const onSubmit = () => {
       if (todo.value === '') {
@@ -62,7 +70,7 @@ export default {
         todos.value.push({
           id: Date.now(),
           subject: todo.value,
-          completed: true,
+          completed: false,
         });
         hasError.value = false;
         todo.value = '';
@@ -74,6 +82,7 @@ export default {
       todos,
       onSubmit,
       hasError,
+      todoStyle,
     };
   },
 }
@@ -82,5 +91,9 @@ export default {
 <style>
 .name{
   color:#ff0000;
+}
+.todo {
+  color: gray;
+  text-decoration: line-through;
 }
 </style>
